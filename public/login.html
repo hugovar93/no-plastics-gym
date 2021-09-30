@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NO PLASTIC GYM - Login</title>
+    <!--Latest compiled and minified css-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!--jQuery library-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!--Latest compiled Javascript-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!--FIREBASE-->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <!--FIREBASE-->
+</head>
+<body style="background-image: url('./gym_background.jpg'); background-color: rgba(0, 0, 0, .5); background-repeat: no-repeat; background-size: cover; background-position: center center; background-attachment: fixed;">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="./index.html">NO PLASTIC'S GYM <p class='glyphicon glyphicon-apple' style='color: red; height: inherit;'></p></a>
+          </div>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="./index.html"><span class="glyphicon glyphicon-thumbs-down"></span> Cancel</a></li>
+          </ul>
+        </div>
+      </nav>
+    <div class="container container-sm container-md container-lg rounded" style="background-color: #222; color: #9d9d9d; border-radius: 15px 15px 15px 15px;">
+        <form id="loginForm">
+            <h3>Login</h3>
+            <div class="form-wrapper">
+                <label >Email address</label>
+                <input id="loginEmail" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+            </div><br>
+            <div class="form-wrapper">
+                <label >Password</label>
+                <input id="loginPassword" type="password" class="form-control" placeholder="Enter password">
+            </div><br>
+            <div>
+                <label id="incorrectCredentials" style="display: none; color: #5bc0de;"></label>
+            </div>
+            <div class="form-group">
+                <button id="btn-login" type="submit" class="btn btn-info">Login</button>
+            </div>
+            <div>
+                <a type="button" data-toggle="modal" data-target="#resetPasswordModal" class="btn-link">Forgot Password?</a>
+            </div><br>
+        </form>
+    </div>
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-hidden="true" style="margin-top: 15%;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content" style="background: #222;">
+            <div class="modal-header" style="border-bottom: 0ch;">
+              <h4 class="modal-title" style="color: #9d9d9d">Reset Password<a type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" style="color: #b8b6b6;"></span></a></h4>
+            </div>
+            <div class="modal-body" style="background-color: #222; color: #9d9d9d;">
+              <p style="text-align: center;">We will send to your email a link to reset your password.</p><br>
+              <input id="emailResetPassword" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email"><br>
+              <label id="labelForEmailResetPassword" style="display: none; color: #5bc0de;"></label>
+            </div>
+            <div class="modal-footer" style="border-top: 0ch;">
+              <button type="button" class="btn btn-info" id="btn-resetPassword">Send Email</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <script>
+    // Web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyAU6Q-UDX2mKOPJgtRn1uXmOywgc6Mn8xA",
+        authDomain: "noplastic-sgym.firebaseapp.com",
+        projectId: "noplastic-sgym",
+        storageBucket: "noplastic-sgym.appspot.com",
+        messagingSenderId: "1028103037541",
+        appId: "1:1028103037541:web:261f5bedf2526c2af69c8c"
+    };
+    // Initialize Firebase
+    const firebaseApp = firebase.initializeApp(firebaseConfig);
+    // Initialize Analytics
+    const analyticsApp = firebase.analytics(firebaseApp); 
+    // Initialize Authentication
+    const authReference = firebase.auth();
+    // Log In User code
+    document.getElementById("btn-login").addEventListener('click', (loginEvent) =>{
+    loginEvent.preventDefault();
+    
+    var email = $('#loginEmail').val();
+    var password = $('#loginPassword').val();
+    
+    authReference.signInWithEmailAndPassword(email, password).then(credentials =>{
+        console.log(credentials.user);
+        window.location.href = "./userInfo.html";
+    }).catch(function(error){
+        console.log(error.message);
+        document.getElementById("incorrectCredentials").innerHTML = "Either the email or password is not correct."
+        document.getElementById("incorrectCredentials").style.display = '';
+    });
+    });
+    // Reset Password
+    document.getElementById("btn-resetPassword").addEventListener('click', (resetEvent)=>{
+        var resetEmail = $('#emailResetPassword').val();
+        console.log(resetEmail);
+        if (resetEmail == "") {
+            document.getElementById("labelForEmailResetPassword").innerHTML = "Please enter your email.";
+            document.getElementById("labelForEmailResetPassword").style.display = '';
+        } else {
+            authReference.sendPasswordResetEmail(resetEmail).then(function(){
+                window.location.href = "./login.html";
+            }).catch(function(error){
+                alert(error.code + " " + error.message);
+            });
+        }
+    });
+    </script>
+</body>
+</html>
